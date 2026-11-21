@@ -19,15 +19,17 @@ import {
 	PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Pen } from "lucide-react";
+import DeleteProduct from "@/components/delete-product";
 
 ("https://developer.mozilla.org/shared-assets/videos/flower.mp4");
 
-export default function ProductsPage() {
+function ProductsPage() {
 	const [products, setProducts] = useState([]);
 	const parameters = useSearchParams();
 	const currentPage = Number(parameters.get("pageNumber") || 1);
@@ -188,7 +190,17 @@ export default function ProductsPage() {
 									<TableCell>{item.compareAt}</TableCell>
 									<TableCell>{item.brand}</TableCell>
 									<TableCell>{item.model}</TableCell>
-									<TableCell></TableCell>
+									<TableCell>
+										<div className=" flex justify-center items-center gap-4 px-2">
+
+											<Link href={"/dashboard/products/edit-product?productId="+item.id} >
+												<Pen />
+											</Link>
+
+											<DeleteProduct product={item}/>
+											
+										</div>
+									</TableCell>
 								</TableRow>
 							);
 						})}
@@ -253,4 +265,12 @@ export default function ProductsPage() {
 			</Pagination>
 		</div>
 	);
+}
+
+export default function ProductsPageWrapper(){
+	return(
+		<Suspense fallback={<h1>Loading...</h1>}>
+			<ProductsPage />
+		</Suspense>
+	)
 }
